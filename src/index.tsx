@@ -21,6 +21,13 @@ export function getConnectedNodes(): Promise<Record<string, string>> {
   return CapabilityClient.getConnectedNodes();
 }
 
+export function getAllCapabilities(): Promise<any> {
+  return CapabilityClient.getAllCapabilities();
+}
+export function hasNodeWithCapability(capability: string): Promise<boolean> {
+  return CapabilityClient.hasNodeWithCapability(capability);
+}
+
 export function sendMessage(
   id: string,
   path: string,
@@ -43,9 +50,20 @@ export function addDiscoveryListener(capability: string): Promise<void> {
   return CapabilityClient.addDiscoveryListener(capability);
 }
 
+export function addReachabilityListener(
+  nodeId: string,
+  capability: string
+): Promise<void> {
+  return CapabilityClient.addReachabilityListener(nodeId, capability);
+}
+
 export function isReachable(
   nodeId: string,
   capability: string
 ): Promise<boolean> {
+  return CapabilityClient.isReachable(nodeId, capability);
+}
+
+export function isNearby(nodeId: string, capability: string): Promise<boolean> {
   return CapabilityClient.isReachable(nodeId, capability);
 }

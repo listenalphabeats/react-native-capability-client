@@ -1,6 +1,6 @@
 {
-  "name": "react-native-capability-client",
-  "version": "0.1.0",
+  "name": "@alphabeats/react-native-capability-client",
+  "version": "0.0.1",
   "description": "The Android Capability Client wrapped in a React Native library",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

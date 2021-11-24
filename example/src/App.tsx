@@ -14,12 +14,17 @@ import {
   addDiscoveryListener,
   addMessageListener,
   isReachable,
-} from 'react-native-capability-client';
+  getAllCapabilities,
+  hasNodeWithCapability,
+  addReachabilityListener,
+  isNearby,
+} from '@alphabeats/react-native-capability-client';
 
 export default function App() {
   const [result, setResult] = React.useState<
     Record<string, string> | undefined
   >();
+  const [capabilities, setCapabilities] = React.useState<any>({});
   const [reachable, setReachable] = React.useState<boolean | undefined>();
 
   let eventListener = null;
@@ -37,16 +42,19 @@ export default function App() {
     eventListener = eventEmitter.addListener('discovery', (event) => {
       console.log('DISCOVERY', event); // "someValue"
     });
-
+    eventListener = eventEmitter.addListener('reachable', (event) => {
+      console.log('REACHABILITY', event); // "someValue"
+    });
     messageListener = eventEmitter.addListener('message', (event) => {
       console.log('MESSAGE', event);
-    });
 
-    eventListener = eventEmitter.addListener('discovery-test', (event) => {
-      console.log(event); // "someValue"
+      if (event.data === 'KgIIAQ==') {
+        setReachable(true);
+      }
     });
 
     addDiscoveryListener('alphabeats-wearos');
+    addReachabilityListener('8d6fc96e', 'alphabeats-wearos');
   }, []);
 
   React.useEffect(() => {
@@ -63,8 +71,40 @@ export default function App() {
     }
   }, [result]);
 
+  console.debug(reachable);
+
   return (
     <View style={styles.container}>
+      <Button
+        title="Check has capability"
+        onPress={() => {
+          hasNodeWithCapability('alphabeats-wearos')
+            .then((nearby: boolean) => console.debug('IS REACHABLE', nearby))
+            .catch(console.debug);
+        }}
+      />
+      <Button
+        title="Check reachability"
+        onPress={() => {
+          isReachable('8d6fc96e', 'alphabeats-wearos')
+            .then((nearby: boolean) => console.debug('IS REACHABLE', nearby))
+            .catch(console.debug);
+        }}
+      />
+      <Button
+        title="Check Nearby"
+        onPress={() => {
+          isNearby('8d6fc96e', 'alphabeats-wearos')
+            .then((nearby: boolean) => console.debug('IS NEARBY', nearby))
+            .catch(console.debug);
+        }}
+      />
+      <Button
+        title="Get capabilities"
+        onPress={() => {
+          getAllCapabilities().then(setCapabilities).catch(console.debug);
+        }}
+      />
       <Button
         title="Send Message"
         onPress={() => {
@@ -84,7 +124,25 @@ export default function App() {
             .catch(console.debug);
         }}
       />
+      <Button
+        title="Verify Reachability"
+        onPress={() => {
+          if (!result) {
+            return;
+          }
+
+          console.debug('Sending message');
+
+          const [id] = Object.keys(result);
+
+          setReachable(false);
+          sendMessage(id, '/alphabeats/v1', 'KgIIAQ==')
+            .then(console.debug)
+            .catch(console.debug);
+        }}
+      />
       <Text>Result: {JSON.stringify(result)}</Text>
+      <Text>Capabilities: {JSON.stringify(capabilities)}</Text>
       <Text>Reacability: {reachable ? 'Reachable' : 'Not reachable'}</Text>
       <Text>Result: {reachable}</Text>
     </View>

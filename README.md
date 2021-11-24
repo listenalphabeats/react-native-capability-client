@@ -18,6 +18,15 @@ const nodes = await getConnectedNodes()
 const result = await sendMessage(nodes[0], '/some/path', 'WgQKAiAx')
 ```
 
+## Cavaets
+
+Android's capability client enables a direct communications line between an app on your phone with an app on your watch. Two important conditions must be met however for this to work:
+
+- The Phone app and the WearOS app must share the same applicationId
+- The Phone app and the WearOS app must be signed with the same keystore
+
+Failure to perform either of those steps will result in the phone and the watch app not being able to exchange messages with one another.
+
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
